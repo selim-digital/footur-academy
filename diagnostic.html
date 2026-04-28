@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostic FOOTUR — Quel joueur tu es vraiment ?</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cdefs%3E%3ClinearGradient id='fg' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%231DB954'/%3E%3Cstop offset='100%25' style='stop-color:%230E7C3A'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M50 5 L95 22 L95 70 C95 92 78 108 50 115 C22 108 5 92 5 70 L5 22 Z' fill='url(%23fg)'/%3E%3Ctext x='50' y='78' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='800' font-size='52'%3EF%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1DB954;
+    --green-dim: rgba(29,185,84,0.12);
+    --green-glow: rgba(29,185,84,0.25);
+    --dark: #080A0C;
+    --dark2: #0F1214;
+    --dark3: #161A1E;
+    --border: rgba(255,255,255,0.07);
+    --text: #E8EAE8;
+    --muted: rgba(232,234,232,0.45);
+    --radius: 12px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRAIN OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* NAV */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,10,12,0.85);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--green); }
+  .nav-back {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--green); }
+
+  /* WRAPPER */
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 120px 24px 80px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 99;
+    height: 3px;
+    background: var(--dark3);
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--green);
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+    box-shadow: 0 0 12px var(--green-glow);
+  }
+
+  /* SCREENS */
+  .screen { display: none; animation: fadeUp 0.35s ease forwards; }
+  .screen.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* INTRO SCREEN */
+  .intro-tag {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--green);
+    background: var(--green-dim);
+    border: 1px solid rgba(29,185,84,0.2);
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+  .intro-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(38px, 7vw, 58px);
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+  }
+  .intro-title em {
+    font-style: normal;
+    color: var(--green);
+    position: relative;
+  }
+  .intro-sub {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 36px;
+    max-width: 520px;
+  }
+  .intro-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .intro-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .intro-meta-item span {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  /* QUESTION SCREEN */
+  .q-counter {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--green);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .q-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: clamp(24px, 5vw, 34px);
+    text-transform: uppercase;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 32px;
+  }
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--dark2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .option::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--green-dim);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .option:hover { border-color: rgba(29,185,84,0.35); transform: translateX(4px); }
+  .option:hover::before { opacity: 1; }
+  .option.selected {
+    border-color: var(--green);
+    background: var(--dark3);
+    transform: translateX(4px);
+    box-shadow: 0 0 0 1px rgba(29,185,84,0.2), 0 4px 24px rgba(29,185,84,0.1);
+  }
+  .option.selected::before { opacity: 1; }
+  .option-letter {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--muted);
+    transition: all 0.2s;
+    position: relative; z-index: 1;
+  }
+  .option.selected .option-letter {
+    background: var(--green);
+    border-color: var(--green);
+    color: #000;
+  }
+  .option-text {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.5;
+    position: relative; z-index: 1;
+    padding-top: 4px;
+  }
+
+  /* NAV BUTTONS */
+  .q-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    gap: 12px;
+  }
+  .btn-prev {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 14px 24px;
+    border-radius: var(--radius);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-prev:hover { border-color: var(--green); color: var(--green); }
+  .btn-next {
+    background: var(--green);
+    border: none;
+    color: #000;
+    padding: 14px 32px;
+    border-radius: var(--radius);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    max-width: 280px;
+    margin-left: auto;
+  }
+  .btn-next:hover { background: #22d45f; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(29,185,84,0.3); }
+  .btn-next:disabled { background: var(--dark3); color: var(--muted); cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* CAPTURE SCREEN */
+  .capture-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(30px, 6vw, 46px);
+    text-transform: uppercase;
+    line-height: 1.0;
+    margin-bottom: 12px;
+  }
+  .capture-sub {
+    font-size: 16px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+  .profile-preview {
+    border: 1px solid rgba(29,185,84,0.3);
+    border-radius: var(--radius);
+    background: var(--green-dim);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .profile-preview-emoji { font-size: 36px; }
+  .profile-preview-info {}
+  .profile-preview-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 2px;
+  }
+  .profile-preview-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 24px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .profile-preview-desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--dark2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--green); }
+  .form-input::placeholder { color: var(--muted); }
+
+  .btn-submit {
+    width: 100%;
+    background: var(--green);
+    border: none;
+    color: #000;
+    padding: 18px 32px;
+    border-radius: var(--radius);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 17px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    margin-top: 8px;
+  }
+  .btn-submit:hover { background: #22d45f; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(29,185,84,0.35); }
+
+  .form-mention {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+
+  /* MERCI SCREEN */
+  .merci-icon {
+    font-size: 56px;
+    margin-bottom: 24px;
+    display: block;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  .merci-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(32px, 6vw, 50px);
+    text-transform: uppercase;
+    line-height: 1.0;
+    margin-bottom: 16px;
+  }
+  .merci-sub {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 32px;
+    max-width: 480px;
+  }
+  .merci-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--dark2);
+    padding: 24px;
+    margin-bottom: 28px;
+  }
+  .merci-card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .merci-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  .btn-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #25D366;
+    color: #fff;
+    padding: 16px 28px;
+    border-radius: var(--radius);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-top: 4px;
+  }
+  .btn-wa:hover { background: #1ebe5a; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,211,102,0.3); }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+
+  .coach-sig {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .coach-sig strong { color: var(--text); }
+
+  /* CTA BUTTON (intro) */
+  .btn-start {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--green);
+    color: #000;
+    padding: 18px 36px;
+    border-radius: var(--radius);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+  }
+  .btn-start:hover {
+    background: #22d45f;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(29,185,84,0.35);
+  }
+  .btn-start svg { transition: transform 0.2s; }
+  .btn-start:hover svg { transform: translateX(4px); }
+
+  /* BG DECO */
+  .bg-deco {
+    position: fixed;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(29,185,84,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .bg-deco2 {
+    position: fixed;
+    bottom: -150px; left: -150px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(29,185,84,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @media (max-width: 480px) {
+    .nav { padding: 14px 16px; }
+    .wrap { padding: 100px 16px 60px; }
+    .q-nav { flex-wrap: wrap; }
+    .btn-next { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-deco"></div>
+<div class="bg-deco2"></div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-wrap">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-logo">FOOT<span>UR</span></a>
+  <a href="/" class="nav-back">← Retour</a>
+</nav>
+
+<!-- WRAP -->
+<div class="wrap">
+
+  <!-- ======== SCREEN 0 : INTRO ======== -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-tag">Diagnostic FOOTUR — Gratuit — 2 min</div>
+    <h1 class="intro-title">
+      Quel joueur<br>tu es<br><em>vraiment ?</em>
+    </h1>
+    <p class="intro-sub">
+      11 questions. Pas de bonnes réponses. Réponds à l'instinct —
+      c'est là que c'est vrai.
+      Ton profil arrive par email en 2 minutes.
+    </p>
+    <div class="intro-meta">
+      <div class="intro-meta-item"><span></span>2 minutes chrono</div>
+      <div class="intro-meta-item"><span></span>100% gratuit</div>
+      <div class="intro-meta-item"><span></span>Résultat immédiat</div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">
+      Commencer mon diagnostic
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ======== SCREENS Q1→Q8 ======== -->
+  <div class="screen" id="screen-q"></div>
+
+  <!-- ======== SCREEN CAPTURE ======== -->
+  <div class="screen" id="screen-capture">
+    <div class="capture-title">Ton profil<br>est <em style="color:var(--green);font-style:normal">prêt.</em></div>
+    <p class="capture-sub">
+      Indique le prénom du joueur et l'email des parents —<br>
+      le profil complet arrive dans 2 minutes.
+    </p>
+
+    <div class="profile-preview" id="profilePreview">
+      <div class="profile-preview-emoji" id="previewEmoji">🫧</div>
+      <div class="profile-preview-info">
+        <div class="profile-preview-label">Son profil</div>
+        <div class="profile-preview-name" id="previewName">LE FANTÔME</div>
+        <div class="profile-preview-desc" id="previewDesc">Feu à l'entraînement, invisible quand ça compte.</div>
+      </div>
+    </div>
+
+    <!-- NETLIFY FORM -->
+    <form name="diagnostic-footur" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleSubmit(event)">
+      <input type="hidden" name="form-name" value="diagnostic-footur">
+      <input type="hidden" name="profil" id="hiddenProfil">
+      <p style="display:none"><input name="bot-field"></p>
+
+      <div class="form-group">
+        <label class="form-label" for="prenom">Prénom du joueur</label>
+        <input class="form-input" type="text" id="prenom" name="prenom" placeholder="Ex : Yanis" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email des parents <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;">(ou le tien si tu as 18 ans et +)</span></label>
+        <input class="form-input" type="email" id="email" name="email" placeholder="email@exemple.com" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="tel">Téléphone (optionnel)</label>
+        <input class="form-input" type="tel" id="tel" name="telephone" placeholder="06 XX XX XX XX">
+      </div>
+
+      <button class="btn-submit" type="submit">
+        D&eacute;velopper mon meilleur Footur !
+      </button>
+
+      <p class="form-mention">
+        Aucun spam. Juste ton profil et quelques conseils concrets.<br>
+        Données confidentielles — jamais partagées.
+      </p>
+    </form>
+  </div>
+
+  <!-- ======== SCREEN MERCI — ATTENTE EMAIL ======== -->
+  <div class="screen" id="screen-merci">
+    <span class="merci-icon">📬</span>
+    <h2 class="merci-title">Ton profil<br><em style="color:var(--green);font-style:normal">est en route.</em></h2>
+    <p class="merci-sub">
+      On vient d'envoyer ton profil FOOTUR à <strong id="merciEmail"></strong>.<br>
+      Vérifie ta boîte mail dans les 2 prochaines minutes.<br>
+      <span style="color:var(--muted);font-size:13px;">Pense à vérifier les spams si tu ne le vois pas.</span>
+    </p>
+
+    <div class="merci-card">
+      <div class="merci-card-title">Ce qui t'attend dans l'email</div>
+      <p>Ton profil comportemental complet — ce qui bloque, pourquoi, et <strong id="merciPrenom"></strong> un exercice concret à faire dès cette semaine.</p>
+    </div>
+
+    <hr class="divider">
+
+    <p class="coach-sig">
+      <strong>Coach Selim</strong> — FOOTUR Coaching • Reims<br>
+      27 joueurs accompagnés. 1ers de D1 en 7 mois.<br>
+      <em style="color:var(--green); font-style:italic; font-size:13px">Que Dieu guide et bénisse nos œuvres. Amîn.</em>
+    </p>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+// ============================================================
+// DATA — QUESTIONS
+// ============================================================
+const questions = [
+  {
+    text: "Quand tu rates un geste en match, tu fais quoi ?",
+    options: [
+      { text: "Tu baisses la tête et tu disparais du match",                        code: "F" },
+      { text: "Tu rejoues l'action dans ta tête, tu t'en veux",                    code: "C" },
+      { text: "Tu hausses les épaules — le foot te touche plus vraiment",           code: "M" },
+      { text: "Tu veux te rattraper seul sur l'action d'après",                    code: "S" },
+      { text: "Tu passes vite à autre chose — le match continue, on va chercher la victoire", code: "G" }
+    ]
+  },
+  {
+    text: "Avant un match important, tu te sens comment ?",
+    options: [
+      { text: "Stressé — tu sais déjà que tu vas moins bien jouer",                code: "F" },
+      { text: "Tu veux tellement bien faire que tu te bloques dès le coup d'envoi", code: "C" },
+      { text: "Pas vraiment concerné — un match comme un autre",                   code: "M" },
+      { text: "Motivé mais tu préfères compter sur toi que sur tes coéquipiers",   code: "S" },
+      { text: "Concentré et prêt — tu veux gagner, pas juste bien paraître",       code: "G" }
+    ]
+  },
+  {
+    text: "Quand il y a un recruteur ou un match à enjeu :",
+    options: [
+      { text: "Tu joues en retrait, tu prends moins de risques que d'habitude",    code: "F" },
+      { text: "Tu calcules chaque geste, tu te crispes sur les détails",           code: "C" },
+      { text: "Ça ne change rien — t'es déjà à plat bien avant",                  code: "M" },
+      { text: "Tu veux montrer ce que tu sais faire — seul si besoin",             code: "S" },
+      { text: "Tu joues ton jeu normal — ce qui compte c'est le résultat, pas le regard", code: "G" }
+    ]
+  },
+  {
+    text: "Après un match raté, tu fais quoi ?",
+    options: [
+      { text: "Tu rentres dans ta chambre, pas envie d'en parler",                 code: "F" },
+      { text: "Tu rejoues les actions en boucle dans ta tête pendant des heures",  code: "C" },
+      { text: "Tu hausses les épaules et tu passes à autre chose — le foot t'occupe de moins en moins", code: "M" },
+      { text: "Tu sais que tes partenaires t'ont pas mis dans les meilleures conditions", code: "S" },
+      { text: "Tu retiens la leçon en 30 secondes et tu te concentres déjà sur le prochain match avec l'équipe", code: "G" }
+    ]
+  },
+  {
+    text: "Sur ton tel, foot ou pas foot ?",
+    options: [
+      { text: "Tu regardes les highlights des autres et tu te compares",           code: "F" },
+      { text: "Tu analyses tes erreurs, tu te critiques",                          code: "C" },
+      { text: "Le foot sur ton tel c'est plus vraiment un sujet",                  code: "M" },
+      { text: "Tu cherches des nouveaux gestes, des tutos skills",                 code: "S" },
+      { text: "Tu regardes des analyses tactiques, des systèmes de jeu — ce qui peut t'élever", code: "G" }
+    ]
+  },
+  {
+    text: "Dans ton équipe actuelle, tu te reconnais dans quoi ?",
+    options: [
+      { text: "Tu parles peu, tu prends rarement des initiatives",                 code: "F" },
+      { text: "Tu es dur avec toi-même et parfois avec tes partenaires",           code: "C" },
+      { text: "Tu es là physiquement mais tu n'y mets plus vraiment du tien",      code: "M" },
+      { text: "Tu préfères récupérer le ballon et faire toi-même plutôt que de combiner", code: "S" },
+      { text: "Tu essaies d'entraîner les autres vers le haut — t'es pas là juste pour toi", code: "G" }
+    ]
+  },
+  {
+    text: "Ce qui te pèse le plus en ce moment dans le foot :",
+    options: [
+      { text: "Tu sais que tu peux faire mieux mais quelque chose te bloque quand ça compte", code: "F" },
+      { text: "Tu te mets trop de pression sur tes erreurs, tu arrives plus à te lâcher", code: "C" },
+      { text: "Tu sais plus vraiment pourquoi tu joues",                           code: "M" },
+      { text: "Tu sens que ton potentiel est limité par ceux autour de toi",       code: "S" },
+      { text: "Tu sens que tu peux franchir un cap — mais t'as pas encore les bons outils pour y arriver", code: "G" }
+    ]
+  },
+  {
+    text: "Tes parents et le foot, c'est comment chez toi ?",
+    options: [
+      { text: "Tu en parles pas trop — tu aimes pas montrer que ça va pas",        code: "F" },
+      { text: "Tu sens leur regard en match — ça te met une pression en plus",     code: "C" },
+      { text: "Tu leur parles plus vraiment foot — tu as un peu décroché toi-même", code: "M" },
+      { text: "Tu gères tes affaires — t'as pas besoin qu'on te dise quoi faire",  code: "S" },
+      { text: "Ils te soutiennent — tu veux leur montrer jusqu'où tu peux aller",  code: "G" }
+    ]
+  },
+  {
+    text: "Dans l'équipe, quand ça se passe mal collectivement :",
+    options: [
+      { text: "Tu te retires encore plus dans ton match individuel",               code: "F" },
+      { text: "Tu te mets encore plus de pression pour compenser",                 code: "C" },
+      { text: "T'en fous un peu — c'est le problème du coach",                     code: "M" },
+      { text: "Tu veux tout régler toi-même, seul",                               code: "S" },
+      { text: "Tu essaies de motiver le groupe — mais tu sais pas encore vraiment comment t'y prendre", code: "G" }
+    ]
+  },
+  {
+    text: "Pendant un match, tu lis le jeu comment ?",
+    options: [
+      { text: "Tu es tellement dans ta tête que le jeu collectif tu le vois pas",  code: "F" },
+      { text: "Tu analyses tellement que tu bloques l'action au dernier moment",   code: "C" },
+      { text: "Tu joues à l'instinct — sans vraiment lire ce qui se passe",        code: "M" },
+      { text: "Tu vois surtout tes propres espaces, rarement ceux de tes partenaires", code: "S" },
+      { text: "Tu vois les espaces et les situations — mais tu réagis souvent une demi-seconde trop tard", code: "G" }
+    ]
+  },
+  {
+    text: "Ta récup, ton sommeil, ta forme physique — t'en fais quoi ?",
+    options: [
+      { text: "Tu t'en préoccupes pas — t'as d'autres choses en tête",             code: "F" },
+      { text: "Tu y penses mais ça devient une source de stress de plus",          code: "C" },
+      { text: "C'est plus vraiment un sujet — le foot te mobilise de moins en moins", code: "M" },
+      { text: "Tu travailles ta technique — la forme c'est secondaire pour toi",   code: "S" },
+      { text: "Tu donnes tout sur le terrain — mais tu sais pas vraiment comment optimiser ta récup ni ton énergie", code: "G" }
+    ]
+  }
+];
+
+// ============================================================
+// DATA — PROFILES
+// ============================================================
+const profiles = {
+  G: {
+    emoji: "💎",
+    name: "LE GROS POTENTIEL",
+    desc: "Tu es déjà bon. Mais tu perds du temps sans le savoir.",
+    short: "Leadership, vision, forme — les 3 dimensions que personne ne t'a encore vraiment travaillées."
+  },
+  M: {
+    emoji: "🔥",
+    name: "LE MOTEUR COUPÉ",
+    desc: "Tu n'as pas perdu le talent. Tu as perdu le pourquoi.",
+    short: "Tu joues encore — mais c'est plus pareil. La flamme est là, quelque part."
+  },
+  F: {
+    emoji: "🫧",
+    name: "LE FANTÔME",
+    desc: "Feu à l'entraînement, invisible quand ça compte.",
+    short: "Le mardi tu régales. Le samedi tu disparais. Ça peut changer."
+  },
+  C: {
+    emoji: "🔩",
+    name: "LE CRISPÉ",
+    desc: "Tu veux tellement bien faire que ça te bloque.",
+    short: "L'exigence est une qualité. Mal dirigée, elle devient un frein."
+  },
+  S: {
+    emoji: "⚡",
+    name: "LE SOLO",
+    desc: "Balle au pied tu es fort. Le collectif, c'est pas encore ton truc.",
+    short: "Ton talent individuel plafonne parce qu'il ne s'amplifie pas dans le collectif."
+  }
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let current = 0;
+let answers = [];
+let finalProfile = null;
+let shuffledQuestions = [];
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildShuffledQuiz() {
+  // Mélange total des 11 questions
+  const shuffled = shuffleArray(questions);
+  // Mélange aussi les options de chaque question
+  shuffledQuestions = shuffled.map(q => ({
+    ...q,
+    options: shuffleArray(q.options)
+  }));
+  answers = new Array(shuffledQuestions.length).fill(null);
+}
+
+// ============================================================
+// FUNCTIONS
+// ============================================================
+function startQuiz() {
+  buildShuffledQuiz();
+  showScreen('screen-q');
+  renderQuestion(0);
+  updateProgress();
+}
+
+function renderQuestion(idx) {
+  current = idx;
+  const q = shuffledQuestions[idx];
+  const letters = ['A','B','C','D','E'];
+  const selected = answers[idx];
+
+  const html = `
+    <div class="q-counter">Question ${idx + 1} / ${shuffledQuestions.length}</div>
+    <div class="q-text">${q.text}</div>
+    <div class="options">
+      ${q.options.map((opt, i) => `
+        <button class="option ${selected === i ? 'selected' : ''}"
+                onclick="selectOption(${i})">
+          <div class="option-letter">${letters[i]}</div>
+          <div class="option-text">${opt.text}</div>
+        </button>
+      `).join('')}
+    </div>
+    <div class="q-nav">
+      ${idx > 0 ? `<button class="btn-prev" onclick="prevQuestion()">← Retour</button>` : '<span></span>'}
+      <button class="btn-next" id="btnNext"
+              onclick="nextQuestion()"
+              ${selected === null ? 'disabled' : ''}>
+        ${idx < shuffledQuestions.length - 1 ? 'Question suivante →' : 'Voir mon profil →'}
+      </button>
+    </div>
+  `;
+
+  document.getElementById('screen-q').innerHTML = html;
+  updateProgress();
+}
+
+function selectOption(optIdx) {
+  answers[current] = optIdx;
+  renderQuestion(current);
+}
+
+function nextQuestion() {
+  if (answers[current] === null) return;
+  if (current < shuffledQuestions.length - 1) {
+    renderQuestion(current + 1);
+  } else {
+    showCapture();
+  }
+}
+
+function prevQuestion() {
+  if (current > 0) renderQuestion(current - 1);
+}
+
+function computeProfile() {
+  const scores = { G: 0, M: 0, F: 0, C: 0, S: 0 };
+  answers.forEach((ansIdx, qIdx) => {
+    if (ansIdx !== null) {
+      const code = shuffledQuestions[qIdx].options[ansIdx].code;
+      scores[code]++;
+    }
+  });
+  // G prioritaire dès 4 réponses — signal intentionnel et fiable
+  if (scores['G'] >= 4) return 'G';
+  return Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+}
+
+function showCapture() {
+  finalProfile = computeProfile();
+  const p = profiles[finalProfile];
+
+  document.getElementById('previewEmoji').textContent = p.emoji;
+  document.getElementById('previewName').textContent = p.name;
+  document.getElementById('previewDesc').textContent = p.short;
+  document.getElementById('hiddenProfil').value = finalProfile;
+
+  showScreen('screen-capture');
+  updateProgress(true);
+}
+
+function handleSubmit(e) {
+  e.preventDefault();
+  const form = e.target;
+  const prenom = document.getElementById('prenom').value.trim();
+  const email  = document.getElementById('email').value.trim();
+  const tel    = document.getElementById('tel').value.trim();
+  const profil = finalProfile;
+
+  const btn = form.querySelector('.btn-submit');
+  btn.textContent = 'Envoi en cours...';
+  btn.disabled = true;
+
+  const BREVO_KEY = 'BREVO_API_KEY_ICI';
+  const BREVO_URL = 'https://api.brevo.com/v3';
+  const LIST_ID   = 3;
+  const TEMPLATE_J0 = 1;
+
+  const profilNoms = {
+    M: 'Le Moteur Coupé', F: 'Le Fantôme',
+    C: 'Le Crispé', S: 'Le Solo', G: 'Le Gros Potentiel'
+  };
+  const profilNom = profilNoms[profil] || 'Le Fantôme';
+  const profilUrl = `https://footur-academy.com/profil?nom=${encodeURIComponent(prenom)}&profil=${profil}`;
+
+  const headers = {
+    'accept':       'application/json',
+    'content-type': 'application/json',
+    'api-key':      BREVO_KEY
+  };
+
+  // 1. Créer contact + ajouter à la liste
+  fetch(`${BREVO_URL}/contacts`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      email,
+      updateEnabled: true,
+      attributes: {
+        PRENOM:      prenom,
+        TELEPHONE:   tel,
+        PROFIL_CODE: profil,
+        PROFIL_NOM:  profilNom,
+        PROFIL_URL:  profilUrl
+      },
+      listIds: [LIST_ID]
+    })
+  })
+  .then(r => r.json())
+  .then(data => {
+    console.log('[FOOTUR] Contact →', JSON.stringify(data));
+
+    // 2. Envoyer email J0
+    return fetch(`${BREVO_URL}/smtp/email`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        templateId: TEMPLATE_J0,
+        sender: { name: 'Coach Selim — FOOTUR', email: 'selim@footur-academy.com' },
+        to: [{ email, name: prenom }],
+        params: { PRENOM: prenom, PROFIL_NOM: profilNom, PROFIL_URL: profilUrl }
+      })
+    });
+  })
+  .then(r => r.json())
+  .then(data => console.log('[FOOTUR] Email J0 →', JSON.stringify(data)))
+  .catch(err => console.error('[FOOTUR] Erreur:', err))
+  .finally(() => {
+    document.getElementById('merciPrenom').textContent = prenom || 'toi';
+    document.getElementById('merciEmail').textContent = email;
+    showScreen('screen-merci');
+    updateProgress(true);
+  });
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(id);
+  target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress(full = false) {
+  const total = shuffledQuestions.length || questions.length;
+  let pct;
+  if (full) {
+    pct = 100;
+  } else {
+    pct = current === 0 && answers[0] === null ? 5 : ((current) / total) * 100;
+  }
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+</script>
+
+<footer style="position:relative;z-index:1;text-align:center;padding:28px 16px 32px;border-top:1px solid rgba(255,255,255,0.05);">
+  <p style="font-size:11px;color:rgba(255,255,255,0.18);letter-spacing:.5px;line-height:1.8;">
+    &copy; 2026 FOOTUR Coaching &mdash; Coach Selim &bull; Reims
+  </p>
+  <p style="font-size:11px;color:rgba(255,255,255,0.13);margin-top:6px;font-style:italic;letter-spacing:.3px;">
+    Dieu guide et b&eacute;nisse nos &oelig;uvres. Amen.
+  </p>
+</footer>
+
+</body>
+</html>

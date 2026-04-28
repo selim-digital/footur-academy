@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FOOTUR — Overlay Photo Comparaison</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#070709;color:#fff;font-family:'Manrope',sans-serif;}
+.tabs{display:flex;gap:6px;padding:20px;position:sticky;top:0;z-index:200;background:#070709;border-bottom:1px solid rgba(255,255,255,0.06);}
+.tab{padding:12px 20px;border:1px solid rgba(255,255,255,0.1);cursor:pointer;font-size:12px;font-weight:800;color:#666;letter-spacing:.5px;transition:.3s;background:transparent;font-family:inherit;}
+.tab.on{background:#1DB954;color:#000;border-color:#1DB954;}
+.tab:hover:not(.on){color:#fff;border-color:rgba(255,255,255,0.25);}
+.pane{display:none;}.pane.on{display:block;}
+.label{padding:20px;font-size:13px;color:#999;line-height:1.7;max-width:700px;}
+.label b{color:#fff;}.label em{color:#1DB954;font-style:normal;}
+
+/* SHARED BANDEAU */
+.bandeau{position:relative;width:100%;height:300px;overflow:hidden;background:#000;}
+.bandeau img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;}
+.bandeau .overlay-text{position:absolute;bottom:0;left:0;right:0;padding:24px 32px;background:linear-gradient(0deg,rgba(0,0,0,0.7),transparent);display:flex;align-items:center;justify-content:space-between;z-index:10;}
+.bandeau .ot{font-family:'Archivo Black',sans-serif;font-size:clamp(14px,2vw,20px);letter-spacing:1px;color:rgba(255,255,255,0.7);}
+.bandeau .ol{font-family:'Archivo Black',sans-serif;font-size:16px;letter-spacing:3px;color:rgba(255,255,255,0.3);}
+.bandeau .ol b{color:rgba(29,185,84,0.5);}
+
+/* A — SCANLINES */
+.overlay-scanlines{position:absolute;inset:0;z-index:5;pointer-events:none;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.15) 2px,
+    rgba(0,0,0,0.15) 3px
+  );
+}
+
+/* B — GRID POINTS */
+.overlay-gridpoints{position:absolute;inset:0;z-index:5;pointer-events:none;
+  background:radial-gradient(circle, rgba(0,0,0,0.3) 1px, transparent 1px);
+  background-size:6px 6px;
+}
+
+/* C — HEX GRID (approximation with SVG) */
+.overlay-hex{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:.25;}
+.overlay-hex svg{width:100%;height:100%;}
+
+/* D — DIAGONAL LINES */
+.overlay-diag{position:absolute;inset:0;z-index:5;pointer-events:none;
+  background:repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    rgba(0,0,0,0.12) 4px,
+    rgba(0,0,0,0.12) 5px
+  );
+}
+
+/* E — COMBO SCANLINES + GRID POINTS */
+.overlay-combo{position:absolute;inset:0;z-index:5;pointer-events:none;}
+.overlay-combo::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.1) 2px,
+    rgba(0,0,0,0.1) 3px
+  );
+}
+.overlay-combo::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(circle, rgba(29,185,84,0.08) 1px, transparent 1px);
+  background-size:8px 8px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="tabs">
+  <div class="tab on" onclick="show(0)">A — Scanlines</div>
+  <div class="tab" onclick="show(1)">B — Grid Points</div>
+  <div class="tab" onclick="show(2)">C — Hex Grid</div>
+  <div class="tab" onclick="show(3)">D — Diagonal Lines</div>
+  <div class="tab" onclick="show(4)">E — Combo (Scanlines + Grid)</div>
+</div>
+
+<!-- A — SCANLINES -->
+<div class="pane on" id="p0">
+  <div class="label"><em>Option A — Scanlines</em><br>Lignes horizontales fines (1px espac&eacute;es de 2px). Style <b>broadcast TV sportif / retransmission match</b>. Tr&egrave;s cin&eacute;matique. Masque bien la basse r&eacute;solution. <b>Recommand&eacute; par le comit&eacute;.</b></div>
+  <div class="bandeau">
+    <img src="https://fcb-u18-story.netlify.app/images/20260314_153323_1_.jpg" alt="U18 Bezannes">
+    <div class="overlay-scanlines"></div>
+    <div class="overlay-text">
+      <div class="ot">Coaching de joueurs U18 FC BEZANNES 2050 au Creps</div>
+      <div class="ol">FOOT<b>UR</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- B — GRID POINTS -->
+<div class="pane" id="p1">
+  <div class="label"><em>Option B — Grid Points</em><br>Matrice de petits points r&eacute;guliers. Style <b>radar / data / HUD</b>. Coh&eacute;rent avec le positionnement data de FOOTUR. Plus subtil mais masque moins la basse r&eacute;solution.</div>
+  <div class="bandeau">
+    <img src="https://fcb-u18-story.netlify.app/images/20260314_153323_1_.jpg" alt="U18 Bezannes">
+    <div class="overlay-gridpoints"></div>
+    <div class="overlay-text">
+      <div class="ot">Coaching de joueurs U18 FC BEZANNES 2050 au Creps</div>
+      <div class="ol">FOOT<b>UR</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- C — HEX GRID -->
+<div class="pane" id="p2">
+  <div class="label"><em>Option C — Hex Grid</em><br>Motif hexagonal. Style <b>tech / futuriste / eSport</b>. Coh&eacute;rent avec le nom FOOTUR. Peut distraire si trop visible.</div>
+  <div class="bandeau">
+    <img src="https://fcb-u18-story.netlify.app/images/20260314_153323_1_.jpg" alt="U18 Bezannes">
+    <div class="overlay-hex">
+      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="hex" width="28" height="49" patternUnits="userSpaceOnUse" patternTransform="scale(1)">
+            <path d="M14 0 L28 8 L28 24 L14 32 L0 24 L0 8 Z" fill="none" stroke="rgba(29,185,84,0.3)" stroke-width="0.5"/>
+            <path d="M14 17 L28 25 L28 41 L14 49 L0 41 L0 25 Z" fill="none" stroke="rgba(29,185,84,0.3)" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#hex)"/>
+      </svg>
+    </div>
+    <div class="overlay-text">
+      <div class="ot">Coaching de joueurs U18 FC BEZANNES 2050 au Creps</div>
+      <div class="ol">FOOT<b>UR</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- D — DIAGONAL LINES -->
+<div class="pane" id="p3">
+  <div class="label"><em>Option D — Diagonal Lines</em><br>Lignes diagonales fines &agrave; -45&deg;. Style <b>sport / dynamisme / &eacute;nergie</b>. Coh&eacute;rent avec les diagonales du design g&eacute;n&eacute;ral de la page. Bonne alternative aux scanlines.</div>
+  <div class="bandeau">
+    <img src="https://fcb-u18-story.netlify.app/images/20260314_153323_1_.jpg" alt="U18 Bezannes">
+    <div class="overlay-diag"></div>
+    <div class="overlay-text">
+      <div class="ot">Coaching de joueurs U18 FC BEZANNES 2050 au Creps</div>
+      <div class="ol">FOOT<b>UR</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- E — COMBO -->
+<div class="pane" id="p4">
+  <div class="label"><em>Option E — Combo (Scanlines + Grid Points verts)</em><br>Les scanlines pour masquer la r&eacute;solution + une grille de micro-points verts pour le c&ocirc;t&eacute; <b>data/FOOTUR</b>. Le meilleur des deux mondes. L&eacute;g&egrave;rement plus complexe visuellement.</div>
+  <div class="bandeau">
+    <img src="https://fcb-u18-story.netlify.app/images/20260314_153323_1_.jpg" alt="U18 Bezannes">
+    <div class="overlay-combo"></div>
+    <div class="overlay-text">
+      <div class="ot">Coaching de joueurs U18 FC BEZANNES 2050 au Creps</div>
+      <div class="ol">FOOT<b>UR</b></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(n){
+  document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('on')});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});
+  document.getElementById('p'+n).classList.add('on');
+  document.querySelectorAll('.tab')[n].classList.add('on');
+}
+</script>
+</body>
+</html>

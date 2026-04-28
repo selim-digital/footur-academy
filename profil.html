@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ton profil FOOTUR</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Cdefs%3E%3ClinearGradient id='fg' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%231DB954'/%3E%3Cstop offset='100%25' style='stop-color:%230E7C3A'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M50 5 L95 22 L95 70 C95 92 78 108 50 115 C22 108 5 92 5 70 L5 22 Z' fill='url(%23fg)'/%3E%3Ctext x='50' y='78' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='800' font-size='52'%3EF%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,800;0,900;1,700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1DB954;
+    --green-dim: rgba(29,185,84,0.1);
+    --green-glow: rgba(29,185,84,0.2);
+    --dark: #080A0C;
+    --dark2: #0F1214;
+    --dark3: #161A1E;
+    --border: rgba(255,255,255,0.07);
+    --text: #E8EAE8;
+    --muted: rgba(232,234,232,0.45);
+    --ease: cubic-bezier(0.4,0,0.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* GRAIN */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* DECO */
+  .bg-deco {
+    position: fixed; top: -200px; right: -200px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(29,185,84,0.06) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  .bg-deco2 {
+    position: fixed; bottom: -150px; left: -150px;
+    width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(29,185,84,0.04) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* NAV */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px;
+    background: rgba(8,10,12,0.9);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-size: 20px; letter-spacing: 0.04em;
+    color: var(--text); text-decoration: none;
+  }
+  .nav-logo span { color: var(--green); }
+  .nav-back {
+    font-size: 12px; color: var(--muted); text-decoration: none;
+    letter-spacing: 0.06em; transition: color 0.2s;
+    font-weight: 600;
+  }
+  .nav-back:hover { color: var(--green); }
+
+  /* WRAP */
+  .wrap {
+    position: relative; z-index: 1;
+    max-width: 680px; margin: 0 auto;
+    padding: 100px 20px 80px;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes shimmer {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .anim-1 { opacity: 0; animation: fadeUp 0.5s var(--ease) 0.1s forwards; }
+  .anim-2 { opacity: 0; animation: fadeUp 0.5s var(--ease) 0.25s forwards; }
+  .anim-3 { opacity: 0; animation: fadeUp 0.5s var(--ease) 0.4s forwards; }
+  .anim-4 { opacity: 0; animation: fadeUp 0.5s var(--ease) 0.55s forwards; }
+  .anim-5 { opacity: 0; animation: fadeUp 0.5s var(--ease) 0.7s forwards; }
+  .anim-6 { opacity: 0; animation: fadeUp 0.5s var(--ease) 0.85s forwards; }
+
+  /* HEADER PROFIL */
+  .profil-header {
+    text-align: center;
+    padding: 40px 0 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+  }
+  .profil-tag {
+    display: inline-block;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--green);
+    background: var(--green-dim);
+    border: 1px solid rgba(29,185,84,0.2);
+    padding: 5px 14px; border-radius: 100px;
+    margin-bottom: 24px;
+  }
+  .profil-emoji {
+    font-size: 72px; display: block; margin-bottom: 16px;
+    animation: scaleIn 0.6s var(--ease) 0.15s both;
+  }
+  .profil-prenom {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(15px, 4vw, 20px);
+    font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--text);
+    opacity: 0.7;
+    margin-bottom: 8px;
+  }
+  .profil-nom {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900;
+    font-size: clamp(40px, 10vw, 64px);
+    text-transform: uppercase; letter-spacing: -0.01em;
+    line-height: 0.95; color: var(--green);
+    margin-bottom: 20px;
+  }
+  .profil-accroche {
+    font-size: clamp(16px, 3.5vw, 19px);
+    color: var(--text);
+    opacity: 0.75;
+    font-style: italic;
+    line-height: 1.55; max-width: 480px; margin: 0 auto;
+  }
+
+  /* BLOCS */
+  .bloc {
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--dark2);
+    overflow: hidden;
+  }
+  .bloc-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.025);
+  }
+  .bloc-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green); flex-shrink: 0;
+    animation: shimmer 2s infinite;
+  }
+  .bloc-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 800; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--green);
+  }
+  .bloc-body {
+    padding: 24px;
+    font-size: 16px; color: var(--text); line-height: 1.8;
+  }
+  .bloc-body p + p { margin-top: 14px; }
+  .bloc-body b {
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  /* BLOC EXERCICE — orange dégradé */
+  .bloc-exercice {
+    border: none;
+    background: linear-gradient(135deg, rgba(255,149,0,0.12) 0%, rgba(255,107,43,0.1) 60%, rgba(255,61,0,0.08) 100%);
+    box-shadow: 0 0 0 1.5px rgba(255,107,43,0.35), 0 4px 24px rgba(255,107,43,0.08);
+  }
+  .bloc-exercice .bloc-header {
+    background: linear-gradient(135deg, rgba(255,149,0,0.15) 0%, rgba(255,107,43,0.12) 100%);
+    border-bottom: 1px solid rgba(255,107,43,0.2);
+  }
+  .bloc-exercice .bloc-dot {
+    background: linear-gradient(135deg, #FF9500, #FF3D00);
+    animation: shimmer 1.5s infinite;
+  }
+  .bloc-exercice .bloc-label {
+    background: linear-gradient(135deg, #FF9500 0%, #FF6B2B 60%, #FF3D00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .bloc-exercice .bloc-body {
+    font-size: 17px;
+  }
+  .bloc-exercice .bloc-body b {
+    background: linear-gradient(135deg, #FF9500 0%, #FF6B2B 60%, #FF3D00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* CITATION COACH */
+  .citation {
+    margin: 24px 0 0;
+    padding: 20px 24px;
+    border-left: 3px solid var(--green);
+    background: rgba(29,185,84,0.07);
+    border-radius: 0 10px 10px 0;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .citation-author {
+    margin-top: 10px;
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    color: var(--green);
+    text-transform: uppercase;
+  }
+
+  /* CTA */
+  .cta-block {
+    margin-top: 40px;
+    padding: 32px 24px;
+    border: 1px solid rgba(29,185,84,0.25);
+    border-radius: 12px;
+    background: var(--dark2);
+    text-align: center;
+  }
+  .cta-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--green); margin-bottom: 14px;
+  }
+  .cta-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-size: clamp(24px, 6vw, 36px);
+    text-transform: uppercase; line-height: 1.05;
+    margin-bottom: 12px;
+  }
+  .cta-sub {
+    font-size: 14px; color: var(--muted); line-height: 1.7;
+    margin-bottom: 24px; max-width: 400px; margin-left: auto; margin-right: auto;
+  }
+  .cta-items {
+    display: flex; flex-direction: column; gap: 8px;
+    margin-bottom: 28px;
+    text-align: left;
+  }
+  .cta-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 14px; color: var(--text);
+  }
+  .cta-item::before {
+    content: '✓';
+    color: var(--green); font-weight: 700;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .btn-wa {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--green); color: #000;
+    padding: 16px 28px; border-radius: 8px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 900; font-size: 16px; letter-spacing: 0.08em;
+    text-transform: uppercase; text-decoration: none;
+    transition: all 0.2s var(--ease);
+    width: 100%; justify-content: center;
+  }
+  .btn-wa:hover {
+    background: #22d45f; transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(29,185,84,0.35);
+  }
+  .btn-wa svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .cta-mention {
+    margin-top: 14px; font-size: 12px; color: var(--muted); line-height: 1.6;
+  }
+  .price-badge {
+    display: inline-block;
+    background: rgba(29,185,84,0.12);
+    border: 1px solid rgba(29,185,84,0.25);
+    color: var(--green);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800; font-size: 22px; letter-spacing: 0.05em;
+    padding: 6px 20px; border-radius: 100px;
+    margin-bottom: 20px;
+  }
+
+  @media(min-width: 480px) {
+    .btn-wa { width: auto; }
+    .wrap { padding: 100px 32px 80px; }
+    .cta-items { max-width: 320px; margin-left: auto; margin-right: auto; }
+  }
+
+  /* FOOTER */
+  .footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 28px 16px 32px;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  .footer p { font-size: 11px; color: rgba(255,255,255,0.18); letter-spacing: .5px; line-height: 1.8; }
+  .footer em { font-size: 11px; color: rgba(255,255,255,0.13); font-style: italic; letter-spacing: .3px; }
+</style>
+</head>
+<body>
+
+<div class="bg-deco"></div>
+<div class="bg-deco2"></div>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">FOOT<span>UR</span></a>
+  <a href="/diagnostic" class="nav-back">← Refaire le test</a>
+</nav>
+
+<div class="wrap" id="profilWrap">
+  <!-- Contenu injecté dynamiquement -->
+</div>
+
+<footer class="footer">
+  <p>&copy; 2026 FOOTUR Coaching &mdash; Coach Selim &bull; Reims</p>
+  <em>Dieu guide et b&eacute;nisse nos &oelig;uvres. Amen.</em>
+</footer>
+
+<script>
+// ============================================================
+// DATA PROFILS
+// ============================================================
+const profils = {
+  M: {
+    emoji: "🔥",
+    nom: "LE MOTEUR COUPÉ",
+    accroche: "Tu n'as pas perdu le talent. Tu as perdu le pourquoi.",
+    blocs: [
+      {
+        label: "Ce que tu vis en ce moment",
+        contenu: `<p>Tu joues encore — mais c'est plus pareil.</p>
+<p>Le feu que t'avais à 13, 14 ans... il est quelque part, mais tu le retrouves plus. Tu vas à l'entraînement. Tu fais les matchs. Mais au fond, tu pourrais arrêter demain — et une partie de toi s'en foutrait presque.</p>
+<p>Ce n'est pas de la paresse. Ce n'est pas un manque de talent. C'est un <b>moteur qui tourne à vide</b> parce qu'il n'a plus de carburant.</p>`
+      },
+      {
+        label: "Pourquoi ça bloque",
+        contenu: `<p>Quand on joue sans sens, le cerveau coupe l'énergie. C'est un mécanisme de protection — pas un défaut.</p>
+<p>Quelque part, quelque chose s'est déconnecté entre <b>toi</b> et <b>le foot</b>. Peut-être la pression des autres. Peut-être la répétition. Peut-être que personne n'a jamais pris le temps de te demander ce que TOI tu veux vraiment de ce sport.</p>
+<p>Le problème n'est pas sur le terrain. Il est dans ta tête — et ça, ça se travaille.</p>`
+      },
+      {
+        label: "⚡ Ce que tu fais cette semaine",
+        exercice: true,
+        contenu: `<p>Avant ton prochain entraînement, prends <b>5 minutes seul</b>. Écris 3 réponses à cette question :</p>
+<p><b>« Pourquoi j'ai commencé le foot ? »</b></p>
+<p>Pas les bonnes réponses. Les vraies. Garde ce papier dans ta poche de short pendant la séance.</p>`
+      },
+      {
+        label: "La bonne nouvelle",
+        contenu: `<p>Le Moteur Coupé est l'archétype qui progresse le plus vite une fois qu'il retrouve son pourquoi. Parce que le talent, lui, <b>n'est jamais parti.</b></p>`,
+        citation: "Le Bilan FOOTUR commence exactement là : 2h sur le terrain pour rallumer ce qui s'est éteint.",
+      }
+    ]
+  },
+
+  F: {
+    emoji: "🫧",
+    nom: "LE FANTÔME",
+    accroche: "Tu n'as pas un problème de niveau. Tu as un problème de confiance.",
+    blocs: [
+      {
+        label: "Ce que tu vis en ce moment",
+        contenu: `<p>Le mardi à l'entraînement — tu régales. Tes partenaires le savent. Le coach le sait. Toi tu le sais.</p>
+<p>Le samedi en match — t'es là mais t'es pas là. Tu prends moins de risques. Tu touches moins le ballon. Tu disparais exactement au moment où tu devrais briller.</p>
+<p>Et le pire, c'est que tu le <b>sens</b> pendant le match. Tu te regardes jouer de l'extérieur. Et t'arrives pas à te débloquer.</p>`
+      },
+      {
+        label: "Pourquoi ça bloque",
+        contenu: `<p>Sous pression, ton cerveau active un <b>mode défensif</b>. Il préfère ne rien tenter plutôt que de rater devant ceux qui comptent.</p>
+<p>Ce n'est pas de la lâcheté — c'est un profil comportemental précis. Les meilleurs joueurs ne sont pas ceux qui n'ont pas peur. Ce sont ceux qui savent <b>quoi faire</b> avec cette peur. Toi, personne ne t'a encore montré comment.</p>`
+      },
+      {
+        label: "⚡ Ce que tu fais cette semaine",
+        exercice: true,
+        contenu: `<p>Au prochain match, fixe-toi <b>un seul objectif</b> avant le coup d'envoi. Pas "bien jouer". Pas "pas rater".</p>
+<p>Un objectif d'action : <b>« Je demande le ballon 3 fois dans le premier quart d'heure. »</b></p>
+<p>Juste ça. Mesurable. Concret. Après le match, note si tu l'as fait. Oui ou non.</p>`
+      },
+      {
+        label: "La bonne nouvelle",
+        contenu: `<p>Le Fantôme est l'archétype le plus sous-estimé. Parce que le talent est là — il attend juste les bonnes clés.</p>
+<p>Le Bilan FOOTUR identifie exactement ce qui se passe dans ta tête quand ça compte. Et on te donne les outils pour que <b>le samedi ressemble enfin au mardi.</b></p>`,
+        citation: "Ce n'est pas un problème de talent. C'est un problème de connaissance de soi."
+      }
+    ]
+  },
+
+  C: {
+    emoji: "🔩",
+    nom: "LE CRISPÉ",
+    accroche: "Tu n'es pas trop exigeant. Tu t'y prends juste dans le mauvais sens.",
+    blocs: [
+      {
+        label: "Ce que tu vis en ce moment",
+        contenu: `<p>Tu veux bien faire. Vraiment. Tu analyses. Tu travailles. Tu te remets en question.</p>
+<p>Mais sur le terrain, ça se retourne contre toi. Une erreur — et t'es déjà dans ta tête à comprendre pourquoi. Une mauvaise passe — et t'as déjà raté les 3 actions suivantes parce que ton cerveau est encore sur la précédente.</p>
+<p>Tu joues avec la <b>peur de rater</b> au lieu de jouer avec l'<b>envie de réussir.</b></p>`
+      },
+      {
+        label: "Pourquoi ça bloque",
+        contenu: `<p>L'exigence est une qualité extraordinaire. Mais dirigée vers toi-même sans les bons outils, elle devient un frein.</p>
+<p>Ton profil comportemental sous pression active un mécanisme de <b>surcontrôle</b> — tu veux tellement maîtriser que tu bloques la fluidité naturelle. Les grands joueurs ne pensent pas moins. Ils ont appris à penser <b>autrement</b> dans l'action.</p>`
+      },
+      {
+        label: "⚡ Ce que tu fais cette semaine",
+        exercice: true,
+        contenu: `<p>À l'entraînement, adopte une règle simple :</p>
+<p><b>Après chaque erreur, 3 secondes maximum dans ta tête — puis regard vers l'avant.</b></p>
+<p>Littéralement : regarde devant toi, pas en bas. Le corps suit les yeux. Les yeux suivent l'intention.</p>`
+      },
+      {
+        label: "La bonne nouvelle",
+        contenu: `<p>Le Crispé devient souvent <b>le joueur le plus complet de son groupe</b> quand il apprend à diriger son exigence dans le bon sens.</p>
+<p>Le Bilan FOOTUR cartographie ton profil exact sous pression et te donne un protocole mental adapté à TOI — pas un protocole générique.</p>`,
+        citation: "Ce que les meilleurs font par instinct, ici c'est une science."
+      }
+    ]
+  },
+
+  S: {
+    emoji: "⚡",
+    nom: "LE SOLO",
+    accroche: "Tu n'as pas un problème de talent. Tu passes à côté de ta vraie puissance.",
+    blocs: [
+      {
+        label: "Ce que tu vis en ce moment",
+        contenu: `<p>Balle au pied — tu es dans ton monde. Et dans ce monde, tu es bon.</p>
+<p>Mais l'équipe... c'est compliqué. Tu passes si t'as pas le choix. Tu combines si t'as pas mieux à faire. Et parfois tu sais, au fond, que tu joues <b>à côté</b> de tes partenaires plutôt qu'<b>avec</b> eux.</p>
+<p>Résultat : ton talent individuel plafonne parce qu'il ne s'amplifie pas dans le collectif.</p>`
+      },
+      {
+        label: "Pourquoi ça bloque",
+        contenu: `<p>Ce n'est pas de l'égoïsme. C'est un <b>mode de lecture du jeu</b> qui s'est construit dans le temps.</p>
+<p>Ton cerveau traite l'information en mode individuel — instinctivement. Lire le jeu collectivement, c'est une compétence. <b>Elle s'apprend. Elle se programme.</b> Les plus grands ailiers, les meilleurs numéros 10 — ce qui les a fait exploser, c'est le moment où ils ont compris que le collectif démultipliait leur talent individuel.</p>`
+      },
+      {
+        label: "⚡ Ce que tu fais cette semaine",
+        exercice: true,
+        contenu: `<p>Au prochain entraînement, compte tes passes.</p>
+<p>Objectif : <b>faire 2 passes de plus que d'habitude</b> — délibérément. Pas n'importe lesquelles : des passes qui mettent ton partenaire dans une meilleure position que celle où tu es toi.</p>
+<p>Note comment le jeu change autour de toi.</p>`
+      },
+      {
+        label: "La bonne nouvelle",
+        contenu: `<p>Le Solo est l'archétype avec <b>le plus grand potentiel inexploité</b>. Parce que la technique est déjà là.</p>
+<p>Le Bilan FOOTUR t'apprend à lire le jeu en 4 zones et à devenir le joueur que les autres cherchent à trouver — sans rien perdre de ce qui te rend unique balle au pied.</p>`,
+        citation: "Son terrain. Son profil. Sa data."
+      }
+    ]
+  },
+
+  G: {
+    emoji: "💎",
+    nom: "LE GROS POTENTIEL",
+    accroche: "Tu es déjà bon. Mais tu perds du temps sans le savoir.",
+    blocs: [
+      {
+        label: "Ce que tu vis en ce moment",
+        contenu: `<p>Tu es dans les bons de ton groupe. Tu t'entraînes. Tu gagnes des matchs. Tu es là.</p>
+<p>Mais il y a quelque chose que tu sens confusément — un <b>niveau au-dessus</b> que tu ne sais pas encore exactement comment atteindre. Pas parce que tu manques de volonté. Parce que personne ne t'a encore donné le bon miroir.</p>
+<p>Leadership, vision du jeu, gestion de ton énergie — trois dimensions que tu n'as jamais vraiment travaillées. Pas parce qu'elles n'existent pas. Parce que <b>personne ne te les a encore montrées.</b></p>`
+      },
+      {
+        label: "Pourquoi ça bloque",
+        contenu: `<p>Ce qui fera la différence avec les meilleurs — ça ne se construit pas pendant les matchs. <b>Ça se construit maintenant.</b></p>
+<p>Le joueur qui développe son leadership à 17 ans, sa vision du jeu à 17 ans, sa récupération à 17 ans — c'est celui qui sera encore là à 22 ans quand les autres auront décroché. Tu as les ingrédients. Ce qu'il te faut, c'est un plan précis.</p>`
+      },
+      {
+        label: "⚡ Ce que tu fais cette semaine",
+        exercice: true,
+        contenu: `<p>Pendant le prochain match, observe : <b>combien de fois tu regardes autour de toi AVANT de recevoir le ballon ?</b></p>
+<p>Pas pendant. Avant. C'est ça, la vision du jeu. Note le chiffre. On partira de là.</p>`
+      },
+      {
+        label: "La bonne nouvelle",
+        contenu: `<p>Le Gros Potentiel est l'archétype le plus excitant à coacher. Parce que la base est déjà solide. Ce qu'on construit ensemble, c'est <b>l'étage du dessus.</b></p>
+<p>Le Bilan FOOTUR cartographie tes 10 dimensions et identifie exactement les 3 leviers qui vont te faire franchir ce cap — maintenant, pendant qu'il est encore temps.</p>`,
+        citation: "Ce qui se joue aujourd'hui détermine où tu seras dans 3 ans."
+      }
+    ]
+  }
+};
+
+// ============================================================
+// RENDER
+// ============================================================
+function render() {
+  const params = new URLSearchParams(window.location.search);
+  const prenom = params.get('nom') || params.get('prenom') || '';
+  const code   = (params.get('profil') || 'F').toUpperCase();
+  const profil = profils[code] || profils['F'];
+
+  // Meta title
+  document.title = prenom
+    ? `${prenom} — Profil FOOTUR : ${profil.nom}`
+    : `Ton profil FOOTUR : ${profil.nom}`;
+
+  const prenomDisplay = prenom
+    ? `<div class="profil-prenom anim-1">${prenom.toUpperCase()}, ton profil est</div>`
+    : `<div class="profil-prenom anim-1">Ton profil est</div>`;
+
+  const blocsHTML = profil.blocs.map((b, i) => `
+    <div class="bloc ${b.exercice ? 'bloc-exercice' : ''} anim-${i + 3}">
+      <div class="bloc-header">
+        <div class="bloc-dot"></div>
+        <div class="bloc-label">${b.label}</div>
+      </div>
+      <div class="bloc-body">
+        ${b.contenu}
+        ${b.citation ? `<div class="citation">
+          &laquo;&nbsp;${b.citation}&nbsp;&raquo;
+          <div class="citation-author">— Coach Selim</div>
+        </div>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  const waMsg = encodeURIComponent(
+    `Bonjour Coach Selim, ${prenom ? prenom + ' vient' : 'mon fils vient'} de faire le diagnostic FOOTUR. Son profil : ${profil.nom}. J'aimerais en discuter pour le Bilan.`
+  );
+
+  const html = `
+    <div class="profil-header">
+      <div class="profil-tag anim-1">Diagnostic FOOTUR &mdash; R&eacute;sultat</div>
+      <span class="profil-emoji">${profil.emoji}</span>
+      ${prenomDisplay}
+      <div class="profil-nom anim-2">${profil.nom}</div>
+      <p class="profil-accroche anim-2">${profil.accroche}</p>
+    </div>
+
+    ${blocsHTML}
+
+    <div class="cta-block anim-6">
+      <div class="cta-label">La prochaine &eacute;tape</div>
+      <div class="cta-title">Le Bilan<br>FOOTUR</div>
+      <div class="price-badge">99€ &mdash; 2h sur le terrain</div>
+      <p class="cta-sub">On transforme ce profil en plan de progression concret. Adapt&eacute; &agrave; ${prenom || 'votre fils'}. Pas &agrave; un autre.</p>
+      <div class="cta-items">
+        <div class="cta-item">Profil comportemental complet sur 10 dimensions</div>
+        <div class="cta-item">Radar visuel des forces et zones de progr&egrave;s</div>
+        <div class="cta-item">Plan de progression personnalis&eacute;</div>
+        <div class="cta-item">Restitution compl&egrave;te sous 48h</div>
+      </div>
+      <a href="https://wa.me/33762375681?text=${waMsg}" target="_blank" class="btn-wa">
+        <svg fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.856L.036 23.964l6.263-1.641A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.371l-.36-.214-3.716.974.993-3.632-.234-.373A9.818 9.818 0 0112 2.182c5.428 0 9.818 4.39 9.818 9.818 0 5.427-4.39 9.818-9.818 9.818z"/>
+        </svg>
+        Contacter Coach Selim &rarr;
+      </a>
+      <p class="cta-mention">
+        Un message suffit. Coach Selim vous r&eacute;pond sous 24h.<br>
+        Dieu guide et b&eacute;nisse nos &oelig;uvres.
+      </p>
+    </div>
+  `;
+
+  document.getElementById('profilWrap').innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
