@@ -89,79 +89,7 @@ a{text-decoration:none;color:inherit;}
 .btn svg{width:14px;height:14px;}
 @keyframes up{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
 
-.vsl-sound-btn{
-  position:absolute;top:12px;right:12px;z-index:20;
-  display:flex;align-items:center;gap:6px;
-  background:rgba(0,0,0,0.55);
-  border:1px solid rgba(255,255,255,0.15);color:#fff;
-  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  padding:6px 10px;border-radius:100px;cursor:pointer;transition:all .2s;
-}
-.vsl-sound-btn:hover{background:rgba(29,185,84,0.2);border-color:rgba(29,185,84,0.5);}
-/* ===== CTA ORANGE VSL ===== */
-.vsl-cta-btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  background:linear-gradient(135deg,#FF9500 0%,#FF6B2B 60%,#FF3D00 100%);
-  color:#fff !important;font-family:var(--fd);font-weight:900;
-  font-size:13px;letter-spacing:1px;text-transform:uppercase;
-  text-decoration:none;padding:13px 22px;border-radius:8px;
-  box-shadow:0 4px 16px rgba(255,107,43,0.4);transition:all .25s var(--ease);
-  margin:16px auto 10px;line-height:1.3;text-align:center;
-}
-.vsl-cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,43,0.5);}
-@media(min-width:640px){.vsl-cta-btn{padding:14px 28px;font-size:14px;}}
 
-/* ===== VSL SECTION ===== */
-.vsl-section{
-  position:relative;z-index:1;
-  padding:60px 16px;
-  background:var(--bg2);
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-  text-align:center;
-}
-.vsl-tag{
-  display:inline-block;
-  font-size:10px;font-weight:700;letter-spacing:3px;
-  text-transform:uppercase;color:var(--g);
-  background:rgba(29,185,84,0.08);
-  border:1px solid rgba(29,185,84,0.2);
-  padding:5px 14px;border-radius:100px;
-  margin-bottom:16px;
-}
-.vsl-title{
-  font-family:var(--fd);
-  font-size:clamp(22px,5vw,34px);
-  font-weight:900;text-transform:uppercase;
-  letter-spacing:.5px;line-height:1.05;
-  margin-bottom:28px;
-}
-.vsl-title em{font-style:normal;color:var(--g);}
-.vsl-wrap{
-  position:relative;
-  width:100%;
-  max-width:360px;
-  margin:0 auto 24px;
-  border-radius:16px;
-  overflow:hidden;
-  box-shadow:0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(29,185,84,0.15);
-  background:#000;
-  aspect-ratio:9/16;
-}
-.vsl-wrap video{
-  width:100%;height:100%;
-  object-fit:cover;
-  display:block;
-}
-.vsl-cta{
-  font-size:13px;color:var(--t2);
-  line-height:1.7;
-  max-width:360px;margin:0 auto;
-}
-@media(min-width:640px){
-  .vsl-section{padding:80px 32px;}
-  .vsl-wrap{max-width:300px;}
-}
 .h-diag{margin-top:14px;opacity:0;animation:up .5s var(--ease) .78s forwards;}
 .btn-diag{
   display:inline-flex;align-items:center;gap:8px;
@@ -658,37 +586,18 @@ footer a{color:var(--g);}
 </section>
 
 <!-- VSL SECTION -->
-<section class="vsl-section">
-  <div class="vsl-tag">Coach Selim — FOOTUR Academy</div>
-  <h2 class="vsl-title">Le changement<br>commence <em>ICI.</em></h2>
-  <div class="vsl-wrap" id="vslWrap">
-    <video src="VSL_FOOTUR_ACADEMY_low_quality.mp4" autoplay muted loop playsinline id="vslVideo" class="tiktok-video"></video>
-    <div class="overlay-combo"></div>
-    <div class="overlay-grad">
-      <span class="ot">FOOTUR ACADEMY</span>
-      <span class="ol">FOOT<b>UR</b></span>
+<section style="background:var(--bg2);padding:60px 16px;text-align:center;border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);">
+  <div style="font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--g);margin-bottom:14px;">Coach Selim — FOOTUR Academy</div>
+  <h2 style="font-family:var(--fd);font-size:clamp(22px,5vw,30px);font-weight:900;text-transform:uppercase;letter-spacing:.5px;line-height:1.1;margin-bottom:28px;">Le changement commence <em style="font-style:normal;color:var(--g);">ICI.</em></h2>
+  <div class="tiktok-wrap" style="margin-bottom:24px;">
+    <div class="tiktok-frame">
+      <video src="VSL_FOOTUR_ACADEMY_low_quality.mp4" autoplay muted loop playsinline class="tiktok-video"></video>
+      <div class="overlay-combo"></div>
+      <div class="tiktok-overlay">
+        <div class="tiktok-logo">FOOT<b>UR</b></div>
+      </div>
     </div>
-    <!-- BOUTON SON -->
-    <button class="vsl-sound-btn" id="vslSoundBtn" onclick="toggleVSLSound()">
-      <svg id="vslIconMuted" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M3.63 3.63a1 1 0 000 1.41L7.29 8.7 7 9H3a1 1 0 00-1 1v4a1 1 0 001 1h4l5 5a1 1 0 001.65-.76v-3.58l4.18 4.18a9 9 0 01-4.83 1.16 1 1 0 000 2 11 11 0 005.9-1.7l1.31 1.31a1 1 0 001.41-1.41L5.04 3.63a1 1 0 00-1.41 0zM19 12c0 1.03-.2 2.02-.56 2.92l1.49 1.49A10.94 10.94 0 0021 12a11 11 0 00-11-11 1 1 0 000 2 9 9 0 019 9zm-9-7.41V7.7l-2-2V4.59A1 1 0 0110 4v.59z"/>
-      </svg>
-      <svg id="vslIconSound" width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="display:none">
-        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-      </svg>
-      <span id="vslSoundLabel">Activer le son</span>
-    </button>
   </div>
-
-  <!-- CTA ORANGE -->
-  <a href="/diagnostic" class="vsl-cta-btn">
-    <span style="background:linear-gradient(135deg,#FF9500,#FF3D00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">&#9654;</span>
-    &nbsp;Alors le changement commence ICI — Passe ton test
-  </a>
-
-  <p class="vsl-cta">
-    Gratuit · 2 minutes · Résultat immédiat
-  </p>
 </section>
 
 <!-- TRANSITION -->
@@ -1164,52 +1073,7 @@ var procObs=new IntersectionObserver(function(entries){
   });
 },{threshold:0.15});
 var pv=document.getElementById('procVisual');if(pv)procObs.observe(pv);
-// VSL son au premier touch
-(function(){
-  document.addEventListener('touchstart', function(){
-    var v = document.getElementById('vslVideo');
-    if(v && v.muted){ v.muted = false; updateSoundBtn(); }
-  }, { once: true });
-})();
 
-function updateSoundBtn(){
-  var v = document.getElementById('vslVideo');
-  var iconMuted = document.getElementById('vslIconMuted');
-  var iconSound = document.getElementById('vslIconSound');
-  var label = document.getElementById('vslSoundLabel');
-  var btn = document.getElementById('vslSoundBtn');
-  if(!v) return;
-  if(v.muted){
-    if(iconMuted) iconMuted.style.display='block';
-    if(iconSound) iconSound.style.display='none';
-    if(label) label.textContent='Activer le son';
-    if(btn) btn.style.borderColor='rgba(255,255,255,0.15)';
-  } else {
-    if(iconMuted) iconMuted.style.display='none';
-    if(iconSound) iconSound.style.display='block';
-    if(label) label.textContent='Couper le son';
-    if(btn) btn.style.borderColor='rgba(29,185,84,0.5)';
-  }
-}
-function toggleVSLSound(){
-  var v = document.getElementById('vslVideo');
-  if(!v) return;
-  v.muted = !v.muted;
-  updateSoundBtn();
-}
-// Active le son dès le premier clic ou tap sur la page
-(function(){
-  function activateSoundOnFirstInteraction(){
-    var v=document.getElementById('vslVideo');
-    if(v && v.muted){ v.muted=false; updateSoundBtn(); }
-    document.removeEventListener('click', activateSoundOnFirstInteraction);
-    document.removeEventListener('touchstart', activateSoundOnFirstInteraction);
-    document.removeEventListener('scroll', activateSoundOnFirstInteraction);
-  }
-  document.addEventListener('click', activateSoundOnFirstInteraction);
-  document.addEventListener('touchstart', activateSoundOnFirstInteraction);
-  document.addEventListener('scroll', activateSoundOnFirstInteraction);
-})();
 </script>
 </body>
 </html>
