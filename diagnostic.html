@@ -920,59 +920,16 @@ function handleSubmit(e) {
   btn.textContent = 'Envoi en cours...';
   btn.disabled = true;
 
-  const BREVO_KEY = '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';
-  const BREVO_URL = 'https://api.brevo.com/v3';
-  const LIST_ID   = 3;
-  const TEMPLATE_J0 = 1;
-
-  const profilNoms = {
-    M: 'Le Moteur Coupé', F: 'Le Fantôme',
-    C: 'Le Crispé', S: 'Le Solo', G: 'Le Gros Potentiel'
-  };
-  const profilNom = profilNoms[profil] || 'Le Fantôme';
-  const profilUrl = `https://footur-academy.com/profil?nom=${encodeURIComponent(prenom)}&profil=${profil}`;
-
-  const headers = {
-    'accept':       'application/json',
-    'content-type': 'application/json',
-    'api-key':      BREVO_KEY
-  };
-
-  // 1. Créer contact + ajouter à la liste
-  fetch(`${BREVO_URL}/contacts`, {
+  // Appel Netlify Function (clé API cachée côté serveur)
+  fetch('/.netlify/functions/submit-diagnostic', {
     method: 'POST',
-    headers,
-    body: JSON.stringify({
-      email,
-      updateEnabled: true,
-      attributes: {
-        PRENOM:      prenom,
-        TELEPHONE:   tel,
-        PROFIL_CODE: profil,
-        PROFIL_NOM:  profilNom,
-        PROFIL_URL:  profilUrl
-      },
-      listIds: [LIST_ID]
-    })
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      prenom, email, telephone: tel, profil
+    }).toString()
   })
   .then(r => r.json())
-  .then(data => {
-    console.log('[FOOTUR] Contact →', JSON.stringify(data));
-
-    // 2. Envoyer email J0
-    return fetch(`${BREVO_URL}/smtp/email`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        templateId: TEMPLATE_J0,
-        sender: { name: 'Coach Selim — FOOTUR', email: 'selim@footur-academy.com' },
-        to: [{ email, name: prenom }],
-        params: { PRENOM: prenom, PROFIL_NOM: profilNom, PROFIL_URL: profilUrl }
-      })
-    });
-  })
-  .then(r => r.json())
-  .then(data => console.log('[FOOTUR] Email J0 →', JSON.stringify(data)))
+  .then(data => console.log('[FOOTUR] Réponse:', data))
   .catch(err => console.error('[FOOTUR] Erreur:', err))
   .finally(() => {
     document.getElementById('merciPrenom').textContent = prenom || 'toi';

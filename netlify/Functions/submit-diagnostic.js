@@ -1,105 +1,129 @@
 // ============================================================
 // FOOTUR COACHING — Netlify Function
-// Compatible Node 14+ — utilise https natif (pas fetch)
+// Node 18 natif — fetch API
 // ============================================================
 
-const https = require("https");
-
+const BREVO_URL     = "https://api.brevo.com/v3";
 const BREVO_API_KEY = process.env.BREVO_API_KEY;
-const BREVO_HOST    = "api.brevo.com";
+const TEMPLATE_J0   = 1;  // FOOTUR - J0 - Profil
+const LIST_ID       = 3;  // FOOTUR Diagnostic
 
-// IDs templates Brevo
-const TEMPLATE_J0 = 1; // FOOTUR - J0 - Profil
-const TEMPLATE_J3 = 4; // FOOTUR - J3 - Bezannes
-const TEMPLATE_J7 = 3; // FOOTUR - J7 - Bilan
-const LIST_ID     = 3; // Liste "FOOTUR Diagnostic"
+const PROFIL_NOMS = {
+  M: "Le Moteur Coupé",
+  F: "Le Fantôme",
+  C: "Le Crispé",
+  S: "Le Solo",
+  G: "Le Gros Potentiel"
+};
 
-// Helper HTTPS
-function brevoRequest(path, body) {
-  return new Promise((resolve, reject) => {
-    const payload = JSON.stringify(body);
-    const options = {
-      hostname: BREVO_HOST,
-      port: 443,
-      path: `/v3${path}`,
-      method: "POST",
-      headers: {
-        "accept":         "application/json",
-        "content-type":   "application/json",
-        "api-key":        BREVO_API_KEY,
-        "content-length": Buffer.byteLength(payload)
-      }
-    };
-    const req = https.request(options, (res) => {
-      let data = "";
-      res.on("data", chunk => data += chunk);
-      res.on("end", () => {
-        try { resolve({ status: res.statusCode, body: JSON.parse(data) }); }
-        catch (e) { resolve({ status: res.statusCode, body: data }); }
-      });
-    });
-    req.on("error", reject);
-    req.write(payload);
-    req.end();
-  });
-}
+const CORS = {
+  "Access-Control-Allow-Origin":  "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type"
+};
 
 exports.handler = async (event) => {
-  const corsHeaders = {
-    "Access-Control-Allow-Origin":  "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type"
-  };
 
+  // Preflight
   if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers: corsHeaders, body: "" };
+    return { statusCode: 200, headers: CORS, body: "" };
   }
 
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, headers: corsHeaders, body: "Method Not Allowed" };
+    return { statusCode: 405, headers: CORS, body: "Method Not Allowed" };
   }
 
-  const params    = new URLSearchParams(event.body);
-  const prenom    = params.get("prenom")    || "";
-  const email     = params.get("email")     || "";
-  const telephone = params.get("telephone") || "";
-  const profil    = params.get("profil")    || "F";
+  // Parse
+  const p         = new URLSearchParams(event.body);
+  const prenom    = (p.get("prenom")    || "").trim();
+  const email     = (p.get("email")     || "").trim();
+  const telephone = (p.get("telephone") || "").trim();
+  const profil    = (p.get("profil")    || "F").trim().toUpperCase();
+
+  console.log("[FOOTUR] Données reçues:", { prenom, email, profil });
 
   if (!email || !prenom) {
-    return { statusCode: 400, headers: corsHeaders, body: "Prénom et email requis." };
+    return { statusCode: 400, headers: CORS, body: "Prénom et email requis." };
   }
 
+  if (!BREVO_API_KEY) {
+    console.error("[FOOTUR] BREVO_API_KEY manquante !");
+    return { statusCode: 500, headers: CORS, body: "Configuration manquante." };
+  }
+
+  const profilNom = PROFIL_NOMS[profil] || "Le Fantôme";
   const profilUrl = `https://footur-academy.com/profil?nom=${encodeURIComponent(prenom)}&profil=${profil}`;
-  const profilNoms = { M: "Le Moteur Coupé", F: "Le Fantôme", C: "Le Crispé", S: "Le Solo", G: "Le Gros Potentiel" };
-  const profilNom = profilNoms[profil] || profil;
 
+  // ── 1. CRÉER CONTACT BREVO ──────────────────────────────
+  let contactStatus = 0;
   try {
-    // 1. Créer contact Brevo
-    const contactResult = await brevoRequest("/contacts", {
-      email,
-      updateEnabled: true,
-      attributes: { PRENOM: prenom, TELEPHONE: telephone, PROFIL_CODE: profil, PROFIL_NOM: profilNom, PROFIL_URL: profilUrl },
-      listIds: [LIST_ID]
+    const res = await fetch(`${BREVO_URL}/contacts`, {
+      method: "POST",
+      headers: {
+        "accept":       "application/json",
+        "content-type": "application/json",
+        "api-key":      BREVO_API_KEY
+      },
+      body: JSON.stringify({
+        email,
+        updateEnabled: true,
+        attributes: {
+          PRENOM:      prenom,
+          TELEPHONE:   telephone,
+          PROFIL_CODE: profil,
+          PROFIL_NOM:  profilNom,
+          PROFIL_URL:  profilUrl
+        },
+        listIds: [LIST_ID]
+      })
     });
-    console.log("Contact →", contactResult.status, JSON.stringify(contactResult.body));
-
-    // 2. Envoyer email J0
-    const emailResult = await brevoRequest("/smtp/email", {
-      templateId: TEMPLATE_J0,
-      sender: { name: "Coach Selim — FOOTUR", email: "selim@footur-academy.com" },
-      to: [{ email, name: prenom }],
-      params: { PRENOM: prenom, PROFIL_NOM: profilNom, PROFIL_URL: profilUrl }
-    });
-    console.log("Email J0 →", emailResult.status, JSON.stringify(emailResult.body));
-
-    return {
-      statusCode: 200,
-      headers: corsHeaders,
-      body: JSON.stringify({ success: true, contact: contactResult.status, email: emailResult.status })
-    };
-
+    const data = await res.json();
+    contactStatus = res.status;
+    console.log("[FOOTUR] Contact Brevo →", res.status, JSON.stringify(data));
   } catch (err) {
-    console.error("Erreur:", err.message);
-    return { statusCode: 500, headers: corsHeaders, body: JSON.stringify({ error: err.message }) };
+    console.error("[FOOTUR] Erreur contact:", err.message);
   }
+
+  // ── 2. ENVOYER EMAIL J0 ─────────────────────────────────
+  let emailStatus = 0;
+  try {
+    const res = await fetch(`${BREVO_URL}/smtp/email`, {
+      method: "POST",
+      headers: {
+        "accept":       "application/json",
+        "content-type": "application/json",
+        "api-key":      BREVO_API_KEY
+      },
+      body: JSON.stringify({
+        templateId: TEMPLATE_J0,
+        sender: {
+          name:  "Coach Selim — FOOTUR",
+          email: "selim@footur-academy.com"
+        },
+        to: [{ email, name: prenom }],
+        params: {
+          PRENOM:     prenom,
+          PROFIL_NOM: profilNom,
+          PROFIL_URL: profilUrl
+        }
+      })
+    });
+    const data = await res.json();
+    emailStatus = res.status;
+    console.log("[FOOTUR] Email J0 →", res.status, JSON.stringify(data));
+  } catch (err) {
+    console.error("[FOOTUR] Erreur email:", err.message);
+  }
+
+  // ── 3. RÉPONSE ──────────────────────────────────────────
+  return {
+    statusCode: 200,
+    headers: CORS,
+    body: JSON.stringify({
+      success:       true,
+      contactStatus,
+      emailStatus,
+      profilUrl
+    })
+  };
 };
