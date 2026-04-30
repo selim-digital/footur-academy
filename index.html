@@ -596,7 +596,7 @@ footer a{color:var(--g);}
       <div class="tiktok-overlay">
         <div class="tiktok-logo">FOOT<b>UR</b></div>
       </div>
-      <button onclick="var v=document.getElementById('vslVideo');v.muted=!v.muted;this.innerHTML=v.muted?'🔇 Activer le son':'🔊 Couper le son';" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.15);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border-radius:100px;cursor:pointer;z-index:10;">🔇 Activer le son</button>
+      <button onclick="var v=document.getElementById('vslVideo');v.muted=!v.muted;this.innerHTML=v.muted?'🔇 Activer le son':'🔊 Couper le son';" id="vslSoundBtn" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.15);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border-radius:100px;cursor:pointer;z-index:10;">🔇 Activer le son</button>
     </div>
   </div>
   <a href="/diagnostic" style="display:inline-block;background:linear-gradient(135deg,#FF9500 0%,#FF6B2B 60%,#FF3D00 100%);color:#fff;font-family:var(--fd);font-weight:900;font-size:13px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;padding:14px 26px;border-radius:8px;box-shadow:0 4px 16px rgba(255,107,43,0.4);">▶ Alors le changement commence ICI — Passe ton test</a>
@@ -1047,11 +1047,28 @@ footer a{color:var(--g);}
 <footer>
   <p>&copy; 2026 FOOTUR Coaching &mdash; Coach Selim &bull; Reims</p>
   <p style="margin-top:8px;"><a href="https://footur-v2.vercel.app/">FOOTUR</a> &bull; <a href="https://fcb-u18-story.netlify.app/">Bezannes Story</a> &bull; <a href="https://www.nape-entourage.com/">NAPE Entourage</a></p>
+  <p style="margin-top:8px;"><a href="/confidentialite.html">Politique de confidentialit&eacute;</a></p>
   <p style="margin-top:14px;">Dieu guide et b&eacute;nisse nos &oelig;uvres. Amen.</p>
 </footer>
 
 <script>
-function toggle(b){var a=b.nextElementSibling,o=b.classList.contains('open');document.querySelectorAll('.faq-q').forEach(function(q){q.classList.remove('open')});document.querySelectorAll('.faq-ans').forEach(function(x){x.classList.remove('open')});if(!o){b.classList.add('open');a.classList.add('open');}}
+// VSL — unmute au premier scroll (sans toucher à l'autoplay)
+(function(){
+  function unmuteVSL(){
+    var v = document.getElementById('vslVideo');
+    var btn = document.getElementById('vslSoundBtn');
+    if(v && v.muted){
+      v.muted = false;
+      if(btn) btn.innerHTML = '🔊 Couper le son';
+    }
+    window.removeEventListener('scroll', unmuteVSL);
+    window.removeEventListener('click', unmuteVSL);
+    window.removeEventListener('touchstart', unmuteVSL);
+  }
+  window.addEventListener('scroll', unmuteVSL, { once: true });
+  window.addEventListener('click', unmuteVSL, { once: true });
+  window.addEventListener('touchstart', unmuteVSL, { once: true });
+})();var a=b.nextElementSibling,o=b.classList.contains('open');document.querySelectorAll('.faq-q').forEach(function(q){q.classList.remove('open')});document.querySelectorAll('.faq-ans').forEach(function(x){x.classList.remove('open')});if(!o){b.classList.add('open');a.classList.add('open');}}
 function toggleMenu(){var m=document.getElementById('navMobile'),h=document.querySelector('.nav-ham');m.classList.toggle('open');h.classList.toggle('open');}
 function closeMenu(){var m=document.getElementById('navMobile'),h=document.querySelector('.nav-ham');m.classList.remove('open');h.classList.remove('open');}
 window.addEventListener('scroll',function(){document.querySelector('.nav').style.borderBottomColor=window.scrollY>50?'rgba(29,185,84,0.15)':'rgba(255,255,255,0.06)';});

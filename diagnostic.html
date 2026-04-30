@@ -600,8 +600,26 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="tel">Téléphone (optionnel)</label>
-        <input class="form-input" type="tel" id="tel" name="telephone" placeholder="06 XX XX XX XX">
+        <label class="form-label" for="tel">Téléphone</label>
+        <div style="display:flex;gap:8px;">
+          <select class="form-input" id="indicatif" name="indicatif" required style="flex:0 0 130px;padding-right:8px;cursor:pointer;">
+            <option value="+33">🇫🇷 +33</option>
+            <option value="+32">🇧🇪 +32</option>
+            <option value="+41">🇨🇭 +41</option>
+            <option value="+213">🇩🇿 +213</option>
+            <option value="+212">🇲🇦 +212</option>
+            <option value="+216">🇹🇳 +216</option>
+            <option value="+1">🇨🇦 +1</option>
+          </select>
+          <input class="form-input" type="tel" id="tel" name="telephone" placeholder="6 12 34 56 78" required pattern="[0-9 ]{6,}" style="flex:1;">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:8px;">
+        <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:13px;color:var(--muted);line-height:1.5;font-weight:400;text-transform:none;letter-spacing:0;">
+          <input type="checkbox" id="consent" name="consent" required style="margin-top:3px;flex-shrink:0;width:16px;height:16px;cursor:pointer;accent-color:var(--green);">
+          <span>J'accepte de recevoir le profil FOOTUR du joueur ainsi que les emails de suivi pendant 7 jours. Mes données sont traitées conformément à la <a href="/confidentialite.html" target="_blank" style="color:var(--green);">Politique de confidentialité</a>.</span>
+        </label>
       </div>
 
       <button class="btn-submit" type="submit">
@@ -609,8 +627,8 @@
       </button>
 
       <p class="form-mention">
-        Aucun spam. Juste ton profil et quelques conseils concrets.<br>
-        Données confidentielles — jamais partagées.
+        Aucun spam. Désinscription en 1 clic dans chaque email.<br>
+        Données confidentielles — jamais partagées avec des tiers.
       </p>
     </form>
   </div>
@@ -911,10 +929,12 @@ function showCapture() {
 function handleSubmit(e) {
   e.preventDefault();
   const form = e.target;
-  const prenom = document.getElementById('prenom').value.trim();
-  const email  = document.getElementById('email').value.trim();
-  const tel    = document.getElementById('tel').value.trim();
-  const profil = finalProfile;
+  const prenom    = document.getElementById('prenom').value.trim();
+  const email     = document.getElementById('email').value.trim();
+  const indicatif = document.getElementById('indicatif').value;
+  const telBrut   = document.getElementById('tel').value.replace(/\s+/g, '');
+  const tel       = `${indicatif}${telBrut}`;
+  const profil    = finalProfile;
 
   const btn = form.querySelector('.btn-submit');
   btn.textContent = 'Envoi en cours...';
