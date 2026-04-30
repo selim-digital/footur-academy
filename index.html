@@ -590,13 +590,17 @@ footer a{color:var(--g);}
   <div style="font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--g);margin-bottom:14px;">Coach Selim — FOOTUR Academy</div>
   <h2 style="font-family:var(--fd);font-size:clamp(22px,5vw,30px);font-weight:900;text-transform:uppercase;letter-spacing:.5px;line-height:1.1;margin-bottom:28px;">Le changement commence <em style="font-style:normal;color:var(--g);">ICI.</em></h2>
   <div class="tiktok-wrap" style="margin-bottom:24px;">
-    <div class="tiktok-frame">
-      <video src="VSL_FOOTUR_ACADEMY_low_quality.mp4" autoplay muted loop playsinline class="tiktok-video" id="vslVideo"></video>
+    <div class="tiktok-frame" id="vslFrame" onclick="var v=this.querySelector('video');var btn=this.querySelector('.vsl-play');v.play();v.muted=false;btn.style.display='none';" style="cursor:pointer;">
+      <video src="VSL_FOOTUR_ACADEMY_low_quality.mp4" loop playsinline class="tiktok-video"></video>
       <div class="overlay-combo"></div>
       <div class="tiktok-overlay">
         <div class="tiktok-logo">FOOT<b>UR</b></div>
       </div>
-      <button id="vslSoundBtn" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.15);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border-radius:100px;cursor:pointer;z-index:10;">🔇 Activer le son</button>
+      <div class="vsl-play" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:20;background:rgba(0,0,0,0.3);">
+        <div style="width:72px;height:72px;background:linear-gradient(135deg,#FF9500,#FF3D00);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 28px rgba(255,107,43,0.55);">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="#fff" style="margin-left:5px;"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
     </div>
   </div>
   <a href="/diagnostic" style="display:inline-block;background:linear-gradient(135deg,#FF9500 0%,#FF6B2B 60%,#FF3D00 100%);color:#fff;font-family:var(--fd);font-weight:900;font-size:13px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;padding:14px 26px;border-radius:8px;box-shadow:0 4px 16px rgba(255,107,43,0.4);">▶ Alors le changement commence ICI — Passe ton test</a>
@@ -1052,28 +1056,6 @@ footer a{color:var(--g);}
 </footer>
 
 <script>
-// VSL — gestion centralisée du son
-document.addEventListener('DOMContentLoaded', function(){
-  var v   = document.getElementById('vslVideo');
-  var btn = document.getElementById('vslSoundBtn');
-  if(!v || !btn) return;
-
-  // Bouton manuel
-  btn.addEventListener('click', function(){
-    v.muted = !v.muted;
-    btn.innerHTML = v.muted ? '🔇 Activer le son' : '🔊 Couper le son';
-  });
-
-  // Auto-unmute au premier scroll/touch
-  function unmuteVSL(){
-    if(v.muted){
-      v.muted = false;
-      btn.innerHTML = '🔊 Couper le son';
-    }
-  }
-  window.addEventListener('scroll',     unmuteVSL, { once: true });
-  window.addEventListener('touchstart', unmuteVSL, { once: true });
-});
 
 function toggle(b){var a=b.nextElementSibling,o=b.classList.contains('open');document.querySelectorAll('.faq-q').forEach(function(q){q.classList.remove('open')});document.querySelectorAll('.faq-ans').forEach(function(x){x.classList.remove('open')});if(!o){b.classList.add('open');a.classList.add('open');}}
 function toggleMenu(){var m=document.getElementById('navMobile'),h=document.querySelector('.nav-ham');m.classList.toggle('open');h.classList.toggle('open');}
