@@ -596,7 +596,7 @@ footer a{color:var(--g);}
       <div class="tiktok-overlay">
         <div class="tiktok-logo">FOOT<b>UR</b></div>
       </div>
-      <button onclick="var v=document.getElementById('vslVideo');v.muted=!v.muted;this.innerHTML=v.muted?'🔇 Activer le son':'🔊 Couper le son';" id="vslSoundBtn" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.15);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border-radius:100px;cursor:pointer;z-index:10;">🔇 Activer le son</button>
+      <button id="vslSoundBtn" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.15);color:#fff;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:6px 10px;border-radius:100px;cursor:pointer;z-index:10;">🔇 Activer le son</button>
     </div>
   </div>
   <a href="/diagnostic" style="display:inline-block;background:linear-gradient(135deg,#FF9500 0%,#FF6B2B 60%,#FF3D00 100%);color:#fff;font-family:var(--fd);font-weight:900;font-size:13px;letter-spacing:1px;text-transform:uppercase;text-decoration:none;padding:14px 26px;border-radius:8px;box-shadow:0 4px 16px rgba(255,107,43,0.4);">▶ Alors le changement commence ICI — Passe ton test</a>
@@ -1052,18 +1052,26 @@ footer a{color:var(--g);}
 </footer>
 
 <script>
-// VSL — unmute au premier scroll/click/touch
+// VSL — gestion centralisée du son
 document.addEventListener('DOMContentLoaded', function(){
+  var v   = document.getElementById('vslVideo');
+  var btn = document.getElementById('vslSoundBtn');
+  if(!v || !btn) return;
+
+  // Bouton manuel
+  btn.addEventListener('click', function(){
+    v.muted = !v.muted;
+    btn.innerHTML = v.muted ? '🔇 Activer le son' : '🔊 Couper le son';
+  });
+
+  // Auto-unmute au premier scroll/touch
   function unmuteVSL(){
-    var v = document.getElementById('vslVideo');
-    var btn = document.getElementById('vslSoundBtn');
-    if(v && v.muted){
+    if(v.muted){
       v.muted = false;
-      if(btn) btn.innerHTML = '🔊 Couper le son';
+      btn.innerHTML = '🔊 Couper le son';
     }
   }
-  window.addEventListener('scroll', unmuteVSL, { once: true });
-  window.addEventListener('click', unmuteVSL, { once: true });
+  window.addEventListener('scroll',     unmuteVSL, { once: true });
   window.addEventListener('touchstart', unmuteVSL, { once: true });
 });
 
