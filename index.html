@@ -1053,7 +1053,7 @@ footer a{color:var(--g);}
 
 <script>
 // VSL — unmute au premier scroll (sans toucher à l'autoplay)
-(function(){
+document.addEventListener('DOMContentLoaded', function(){
   function unmuteVSL(){
     var v = document.getElementById('vslVideo');
     var btn = document.getElementById('vslSoundBtn');
@@ -1061,14 +1061,11 @@ footer a{color:var(--g);}
       v.muted = false;
       if(btn) btn.innerHTML = '🔊 Couper le son';
     }
-    window.removeEventListener('scroll', unmuteVSL);
-    window.removeEventListener('click', unmuteVSL);
-    window.removeEventListener('touchstart', unmuteVSL);
   }
   window.addEventListener('scroll', unmuteVSL, { once: true });
   window.addEventListener('click', unmuteVSL, { once: true });
   window.addEventListener('touchstart', unmuteVSL, { once: true });
-})();var a=b.nextElementSibling,o=b.classList.contains('open');document.querySelectorAll('.faq-q').forEach(function(q){q.classList.remove('open')});document.querySelectorAll('.faq-ans').forEach(function(x){x.classList.remove('open')});if(!o){b.classList.add('open');a.classList.add('open');}}
+});var a=b.nextElementSibling,o=b.classList.contains('open');document.querySelectorAll('.faq-q').forEach(function(q){q.classList.remove('open')});document.querySelectorAll('.faq-ans').forEach(function(x){x.classList.remove('open')});if(!o){b.classList.add('open');a.classList.add('open');}}
 function toggleMenu(){var m=document.getElementById('navMobile'),h=document.querySelector('.nav-ham');m.classList.toggle('open');h.classList.toggle('open');}
 function closeMenu(){var m=document.getElementById('navMobile'),h=document.querySelector('.nav-ham');m.classList.remove('open');h.classList.remove('open');}
 window.addEventListener('scroll',function(){document.querySelector('.nav').style.borderBottomColor=window.scrollY>50?'rgba(29,185,84,0.15)':'rgba(255,255,255,0.06)';});
