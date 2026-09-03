@@ -103,6 +103,13 @@ a{text-decoration:none;color:inherit;}
   padding:6px 10px;border-radius:100px;cursor:pointer;transition:all .2s;
 }
 .vsl-sound-btn:hover{background:rgba(29,185,84,0.2);border-color:rgba(29,185,84,0.5);}
+.vsl-play{position:absolute;inset:0;z-index:25;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.55));border:0;cursor:pointer;color:#fff;font-family:var(--fb);}
+.vsl-play-ring{width:84px;height:84px;border-radius:50%;background:var(--g);color:#000;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 10px rgba(29,185,84,.18),0 12px 40px rgba(0,0,0,.5);transition:transform .25s var(--ease);}
+.vsl-play-ring svg{margin-left:4px;}
+.vsl-play:hover .vsl-play-ring{transform:scale(1.06);}
+.vsl-play-txt{font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;}
+.vsl-play-sub{font-size:11px;color:rgba(255,255,255,.65);}
+.vsl-wrap.playing{cursor:pointer;}
 /* ===== CTA ORANGE VSL ===== */
 .vsl-cta-btn{
   display:inline-flex;align-items:center;justify-content:center;
@@ -747,7 +754,12 @@ footer a{color:var(--g);}
   <div class="vsl-tag">Coach Selim — FOOTUR Academy</div>
   <h2 class="vsl-title">Le changement<br>commence <em>ICI.</em></h2>
   <div class="vsl-wrap" id="vslWrap">
-    <video src="VSL_FOOTUR_ACADEMY_low_quality.mp4" autoplay muted loop playsinline id="vslVideo" class="tiktok-video"></video>
+    <video src="VSL_FOOTUR_ACADEMY_low_quality.mp4" autoplay muted loop playsinline preload="metadata" id="vslVideo" class="tiktok-video"></video>
+    <button class="vsl-play" id="vslPlay" onclick="vslStart()" style="display:none;" aria-label="Lancer la vidéo de Coach Selim">
+      <span class="vsl-play-ring"><svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="vsl-play-txt">Lancer la vid&eacute;o</span>
+      <span class="vsl-play-sub">45 secondes</span>
+    </button>
     <div class="overlay-combo"></div>
     <div class="overlay-grad">
       <span class="ot">FOOTUR ACADEMY</span>
@@ -993,7 +1005,7 @@ footer a{color:var(--g);}
         </div>
         <div class="bio-block">
           <div class="bio-label">Le d&eacute;clic</div>
-          <p>&Agrave; 43 ans, je prends les U18 du FC Bezannes. M&ecirc;me m&eacute;thode que pour les PDG. R&eacute;sultat : d'&eacute;quipe loisir "entre amis" &agrave; <b>1ERS de D1 en 7 mois.</b> Je l'applique aussi &agrave; moi-m&ecirc;me &mdash; proth&egrave;se de hanche &agrave; 32 ans, 12 ans sans sport et <em>je n'ai jamais &eacute;t&eacute; aussi performant qu'aujourd'hui</em> &agrave; 44 ans.</p>
+          <p>&Agrave; 43 ans, je prends les U18 du FC Bezannes. M&ecirc;me m&eacute;thode que pour les PDG. R&eacute;sultat : d'&eacute;quipe loisir "entre amis" &agrave; <b>1ERS de D1 en 7 mois.</b> Je coache actuellement en <b>U20 R1, U18 et U9-U10</b>. Je l'applique aussi &agrave; moi-m&ecirc;me &mdash; proth&egrave;se de hanche &agrave; 32 ans, 12 ans sans sport et <em>je n'ai jamais &eacute;t&eacute; aussi performant qu'aujourd'hui</em> &agrave; 44 ans.</p>
         </div>
         <div class="bio-block">
           <div class="bio-label">La preuve ultime</div>
@@ -1254,52 +1266,37 @@ var procObs=new IntersectionObserver(function(entries){
   });
 },{threshold:0.15});
 var pv=document.getElementById('procVisual');if(pv)procObs.observe(pv);
-// VSL son au premier touch
-(function(){
-  document.addEventListener('touchstart', function(){
-    var v = document.getElementById('vslVideo');
-    if(v && v.muted){ v.muted = false; updateSoundBtn(); }
-  }, { once: true });
-})();
-
+// VSL : autoplay muet natif (aucun script au chargement). Le son ne s'active QUE par clic sur le bouton.
+// Si l'autoplay est refusé (mode économie d'énergie, etc.), on affiche le bouton lecture — vérification 2 s après le chargement, en lecture seule.
+function vslStart(){
+  var v=document.getElementById('vslVideo'),p=document.getElementById('vslPlay');
+  if(!v) return;
+  var pr=v.play();
+  if(pr&&pr.catch){pr.catch(function(){});}
+  if(p) p.style.display='none';
+}
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    var v=document.getElementById('vslVideo'),p=document.getElementById('vslPlay');
+    if(v&&p&&v.paused){p.style.display='flex';}
+  },2000);
+});
 function updateSoundBtn(){
-  var v = document.getElementById('vslVideo');
-  var iconMuted = document.getElementById('vslIconMuted');
-  var iconSound = document.getElementById('vslIconSound');
-  var label = document.getElementById('vslSoundLabel');
-  var btn = document.getElementById('vslSoundBtn');
+  var v=document.getElementById('vslVideo');
+  var iconMuted=document.getElementById('vslIconMuted'),iconSound=document.getElementById('vslIconSound'),label=document.getElementById('vslSoundLabel'),btn=document.getElementById('vslSoundBtn');
   if(!v) return;
   if(v.muted){
-    if(iconMuted) iconMuted.style.display='block';
-    if(iconSound) iconSound.style.display='none';
-    if(label) label.textContent='Activer le son';
-    if(btn) btn.style.borderColor='rgba(255,255,255,0.15)';
+    if(iconMuted) iconMuted.style.display='block'; if(iconSound) iconSound.style.display='none';
+    if(label) label.textContent='Activer le son'; if(btn) btn.style.borderColor='rgba(255,255,255,0.15)';
   } else {
-    if(iconMuted) iconMuted.style.display='none';
-    if(iconSound) iconSound.style.display='block';
-    if(label) label.textContent='Couper le son';
-    if(btn) btn.style.borderColor='rgba(29,185,84,0.5)';
+    if(iconMuted) iconMuted.style.display='none'; if(iconSound) iconSound.style.display='block';
+    if(label) label.textContent='Couper le son'; if(btn) btn.style.borderColor='rgba(29,185,84,0.5)';
   }
 }
 function toggleVSLSound(){
-  var v = document.getElementById('vslVideo');
-  if(!v) return;
-  v.muted = !v.muted;
-  updateSoundBtn();
+  var v=document.getElementById('vslVideo'); if(!v) return;
+  v.muted=!v.muted; updateSoundBtn();
 }
-// Active le son dès le premier clic ou tap sur la page
-(function(){
-  function activateSoundOnFirstInteraction(){
-    var v=document.getElementById('vslVideo');
-    if(v && v.muted){ v.muted=false; updateSoundBtn(); }
-    document.removeEventListener('click', activateSoundOnFirstInteraction);
-    document.removeEventListener('touchstart', activateSoundOnFirstInteraction);
-    document.removeEventListener('scroll', activateSoundOnFirstInteraction);
-  }
-  document.addEventListener('click', activateSoundOnFirstInteraction);
-  document.addEventListener('touchstart', activateSoundOnFirstInteraction);
-  document.addEventListener('scroll', activateSoundOnFirstInteraction);
-})();
 </script>
 </body>
 </html>
